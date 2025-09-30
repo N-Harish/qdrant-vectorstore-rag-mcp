@@ -12,6 +12,10 @@ from starlette.requests import Request
 from starlette.responses import PlainTextResponse
 
 
+# fastmcp server can't find the dir so createing it first
+path = "/home/sbx_user1051/.nomic"
+os.makedirs(path, exist_ok=True)
+
 auth = BearerAuthProvider(
     jwks_uri=f"https://{os.getenv('AUTH0_DOMAIN')}/.well-known/jwks.json",
     issuer=f"https://{os.getenv('AUTH0_DOMAIN')}/",
@@ -79,3 +83,4 @@ async def similar_vector(collection_name: str, query: str, limit: int, score_thr
 
 if __name__ == "__main__":
     mcp.run(transport='http')
+
