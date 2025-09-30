@@ -1,0 +1,6 @@
+fastmcp==2.10.6
+nomic==3.5.3
+openai==1.97.1
+qdrant_client==1.15.0
+uvicorn
+gunicorn
