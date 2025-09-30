@@ -11,10 +11,6 @@ from utils import get_embedding, ensure_nomic_logged_in, current_millis, one_mon
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse
 
-# print(f"jwks_uri:- https://{os.getenv('AUTH0_DOMAIN')}/.well-known/jwks.json")
-# print(f"issuer:- https://{os.getenv('AUTH0_DOMAIN')}/")
-# print("algorithm:- RS256")
-# print(f"audience:- {os.getenv('AUTH0_API_AUDIENCE')}")
 
 auth = BearerAuthProvider(
     jwks_uri=f"https://{os.getenv('AUTH0_DOMAIN')}/.well-known/jwks.json",
@@ -77,9 +73,9 @@ async def similar_vector(collection_name: str, query: str, limit: int, score_thr
     await ctx.info(f"Got these results by similarity matching:- {ret}")
     return ret
 
-# Create ASGI application
-app = mcp.http_app()
+# # Create ASGI application
+# app = mcp.http_app()
 
 
-# if __name__ == "__main__":
-#     mcp.run(transport='http')
+if __name__ == "__main__":
+    mcp.run(transport='http')
