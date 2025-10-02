@@ -1,20 +1,15 @@
-# from mcp.server.fastmcp import FastMCP
 from qdrant_client import QdrantClient
 from qdrant_client.http.models.models import QueryResponse
 from qdrant_client.http.models import Filter, FieldCondition, MatchValue, Range
 import os
-# from dotenv import load_dotenv, find_dotenv
 from typing import List
 from fastmcp import FastMCP, Context
 from fastmcp.server.auth import BearerAuthProvider
-from utils import get_embedding, ensure_nomic_logged_in, current_millis, one_month_before
+from utils import get_embedding, ensure_nomic_logged_in, current_millis, one_month_before, get_embedding_hf
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse
+import datetime
 
-
-# # fastmcp server can't find the dir so createing it first
-# path = "/home/sbx_user1051/.nomic"
-# os.makedirs(path, exist_ok=True)
 
 auth = BearerAuthProvider(
     jwks_uri=f"https://{os.getenv('AUTH0_DOMAIN')}/.well-known/jwks.json",
@@ -24,8 +19,6 @@ auth = BearerAuthProvider(
 )
 
 mcp = FastMCP("qdrant store retriever", auth=auth)
-
-# mcp = FastMCP("qdrant store retriever")
 
 qdrant = QdrantClient(
     url=os.getenv("QDRANT_URL"), 
@@ -44,28 +37,30 @@ async def health_check(request: Request):
 @mcp.tool(name="/tool/qdrant_similar_vectors")
 async def similar_vector(collection_name: str, query: str, limit: int, score_threshold: float, ctx: Context) -> QueryResponse:
     # Calculate timestamp for one month ago (in ms)
-    # now_ms = int(datetime.datetime.now(datetime.UTC).timestamp() * 1000)
-    # one_month_ago_ms = now_ms - int(30 * 24 * 60 * 60 * 1000)
+    now_ms = int(datetime.datetime.now(datetime.UTC).timestamp() * 1000)
+    one_month_ago_ms = now_ms - int(30 * 24 * 60 * 60 * 1000)
     await ctx.info(f"Getting Embedding for {query}...")
-    embedding = get_embedding(query)
-    # print(f"shape of embedding:- {embedding.shape}")
+    
+    # embedding = get_embedding(query)
+    embedding = get_embedding_hf(query)
 
     now_ms = current_millis()
     one_month_ago_ms = one_month_before(now_ms)
     
-    # query_filter = Filter(
-    #     must=[
-    #         # FieldCondition(
-    #         #     key="status",
-    #         #     match=MatchValue(value="solved")
-    #         # ),
-    #         FieldCondition(
-    #             key="solved_at",
-    #             range=Range(gte=one_month_ago_ms, lte=now_ms)
-    #         )
-    #     ]
-    # )
-    query_filter=None
+    # Filter for queries that were marked as solved in the past month
+    query_filter = Filter(
+        must=[
+            FieldCondition(
+                key="status",
+                match=MatchValue(value="solved")
+            ),
+            FieldCondition(
+                key="solved_at",
+                range=Range(gte=one_month_ago_ms, lte=now_ms)
+            )
+        ]
+    )
+
     ret = qdrant.query_points(
         collection_name=collection_name,
         query=embedding,
@@ -80,8 +75,5 @@ async def similar_vector(collection_name: str, query: str, limit: int, score_thr
 # # Create ASGI application
 # app = mcp.http_app()
 
-
 if __name__ == "__main__":
     mcp.run(transport='http')
-
-
