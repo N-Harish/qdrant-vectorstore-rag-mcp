@@ -4,3 +4,5 @@ openai==1.97.1
 qdrant_client==1.15.0
 uvicorn
 gunicorn
+sentence-transformers==5.0.0
+einops==0.8.1
