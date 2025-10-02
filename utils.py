@@ -5,6 +5,19 @@ import time
 from nomic import embed
 import nomic
 import os
+from sentence_transformers import SentenceTransformer
+import torch.nn.functional as F
+from typing import List
+
+
+model = SentenceTransformer("nomic-ai/nomic-embed-text-v1.5", trust_remote_code=True)
+
+def get_embedding_hf(text: str) -> List[float]:
+    sentences = [f'search_document: {text}']
+    embeddings = model.encode(sentences, convert_to_tensor=True,)
+    embeddings = F.layer_norm(embeddings, normalized_shape=(embeddings.shape[1],))
+    embeddings = F.normalize(embeddings, p=2, dim=1)
+    return embeddings[0].tolist()
 
 
 def current_millis() -> int:
@@ -50,4 +63,5 @@ def get_embedding(text):
 def ensure_nomic_logged_in():
     key = os.getenv("NOMIC_API_KEY")
     nomic.cli.login(key)
+
 
