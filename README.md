@@ -6,6 +6,10 @@
 * The MCP server is hosted at FastMCP Cloud:- https://qdrant-mcp.fastmcp.app/mcp
 * To check if the server is health, go to https://qdrant-mcp.fastmcp.app/health
 
+## Architecture Diagram
+<img width="1031" height="481" alt="Untitled Diagram drawio (3)" src="https://github.com/user-attachments/assets/200936a3-d873-4fe0-821d-5caba13b6c3b" />
+
+
 ## Set up for running locally
 * Create a free account in [Qdrant cloud](https://qdrant.tech/documentation/cloud-intro)
 * Replace ```<QDRANT_URL>``` with your Qdrant Cloud URL and ```<QDRANT_API_KEY>``` with your API Key in .env file
