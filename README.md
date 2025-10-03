@@ -1,7 +1,8 @@
-# Qdrant MCP Server for Customer Query Using Nomic Embedding
-* In this project, we have created a Qdrant vectorstore based MCP server for our Customer Support RAG application.
-* We extract nomic-text-embed-v1.5 embeddings and then perform similarity search on Qdrant vectorstore.
-* To ensure relevancy, we filter for queries that were marked as solved in the past month and only the filtered queries are used for similarity search
+# Qdrant MCP Server for Customer Support RAG Using Nomic Embedding
+* In this project, we have created a **Qdrant vectorstore** based MCP server for our Customer Support RAG application.
+* We extract **nomic-text-embed-v1.5** embeddings and then perform similarity search on Qdrant vectorstore.
+* To ensure relevancy, we filter for queries that were marked as solved in the past month and only the filtered queries are used for similarity search.
+* We have also enabled **Machine to Machine Oauth (M2M)** using **Auth0** for secure access of our MCP server
 * The MCP server is hosted at FastMCP Cloud:- https://qdrant-mcp.fastmcp.app/mcp
 * To check if the server is health, go to https://qdrant-mcp.fastmcp.app/health
 
